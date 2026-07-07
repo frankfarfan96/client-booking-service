@@ -2,10 +2,13 @@ package com.cm.client_service.controller;
 
 import com.cm.client_service.dto.PatientRequestDTO;
 import com.cm.client_service.dto.PatientResponseDTO;
+import com.cm.client_service.dto.validators.CreatePatientValidationGroup;
 import com.cm.client_service.service.PatientService;
 import jakarta.validation.Valid;
+import jakarta.validation.groups.Default;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,7 +32,10 @@ public class PatientController {
     }
 
     @PostMapping
-    public ResponseEntity<PatientResponseDTO> createPatient(@Valid @RequestBody PatientRequestDTO patientRequestDTO) {
+    public ResponseEntity<PatientResponseDTO> createPatient(
+            @Validated({Default.class, CreatePatientValidationGroup.class})
+            @RequestBody PatientRequestDTO patientRequestDTO) {
+
         PatientResponseDTO patientResponseDTO = patientService.createPatient(patientRequestDTO);
 
         return ResponseEntity.ok().body(patientResponseDTO);
@@ -37,7 +43,7 @@ public class PatientController {
 
     @PutMapping("/{id}")
     public ResponseEntity<PatientResponseDTO> updatePatient(@PathVariable UUID id,
-                                                             @RequestBody PatientRequestDTO patientRequestDTO) {
+                                                             @Validated({Default.class}) @RequestBody PatientRequestDTO patientRequestDTO) {
         PatientResponseDTO patientResponseDTO = patientService.updatePatient(id, patientRequestDTO);
 
         return ResponseEntity.ok().body(patientResponseDTO);
